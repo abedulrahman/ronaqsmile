@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    /* إجبار الصفحة والمتصفح على عدم التمدد أفقياً */
+    html {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      width: 100vw;
+      overflow-x: hidden;
+    }
+
+    body {
+      width: 100vw;
+      max-width: 100%;
+      margin: 0;
+      padding: 8px;
+      box-sizing: border-box;
+      overflow-x: hidden;
+      background-color: #F1F5F9;
+    }
+
+    :root {
+      --primary: #0A192F;       /* أزرق كحلي ملكي */
+      --accent: #1E3A8A;
+      --gold: #D4AF37;          /* لمسة ذهبية */
+      --gold-hover: #B89628;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --error-color: #EF4444;
+      --success-color: #10B981;
+      --border-color: #E2E8F0;
+    }
+
+    * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; }
+    
+    .form-container {
+      background: var(--card-bg); width: 100%; max-width: 580px; margin: 10px auto;
+      border-radius: 20px; box-shadow: 0 15px 35px rgba(10,25,47,0.1);
+      border: 1px solid var(--border-color); position: relative; overflow: hidden;
+    }
+
+    /* رأس النموذج الأصلي */
+    .clinic-header {
+      background: linear-gradient(135deg, #0A192F 0%, #1E3A8A 100%);
+      color: white; padding: 22px 20px 18px; text-align: center;
+      position: relative; border-bottom: 4px solid var(--gold);
+    }
+
+    .clinic-logo-badge {
+      width: 60px; height: 60px; background: white; border-radius: 50%;
+      margin: 0 auto 8px auto; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 2px solid var(--gold);
+      font-size: 28px;
+    }
+
+    .clinic-title-en { font-size: 20px; font-weight: 900; letter-spacing: 1px; color: #FFF; }
+    .clinic-title-ar { font-size: 16px; font-weight: 800; color: var(--gold); margin-top: 2px; }
+    .clinic-slogan { font-size: 11px; font-weight: 500; color: #94A3B8; margin-top: 3px; }
+
+    .form-body { padding: 22px; }
+    .form-group { margin-bottom: 14px; }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    
+    label { display: block; font-weight: 700; font-size: 13px; margin-bottom: 5px; color: var(--primary); }
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; font-size: 13px; font-weight: 500;
+      background-color: #F8FAFC; border: 1.5px solid var(--border-color);
+      border-radius: 8px; outline: none; transition: all 0.2s;
+      box-sizing: border-box;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); background: #FFF; box-shadow: 0 0 0 3px rgba(30,58,138,0.1); }
+    
+    /* تصميم خانة البحث البارزة والعريضة بعرض النموذج */
+    .search-group-full {
+      background: #F0F4F8;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1.5px solid #CBD5E1;
+      margin-bottom: 16px;
+    }
+    .search-group-full label { font-size: 14px; color: var(--accent); }
+    .search-group-full input {
+      font-size: 15px !important;
+      font-weight: 700;
+      border-color: #94A3B8;
+      background-color: #FFFFFF;
+    }
+
+    .error-msg { color: var(--error-color); font-size: 11px; font-weight: 700; margin-top: 4px; display: none; }
+    .input-error { border-color: var(--error-color) !important; background-color: #FEF2F2 !important; }
+
+    /* كروت العرض المالي الأنيقة */
+    .patient-info-card {
+      background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 10px;
+      padding: 12px; margin-bottom: 15px; display: none;
+    }
+    .info-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-label { font-weight: 700; color: var(--primary); }
+    .info-val { font-weight: 800; color: #0284C7; }
+
+    .btn-submit {
+      width: 100%; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
+      color: #0A192F; border: none; padding: 14px; border-radius: 10px;
+      font-size: 16px; font-weight: 800; cursor: pointer; margin-top: 15px;
+      box-shadow: 0 4px 12px rgba(212,175,55,0.3); transition: all 0.2s;
+    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(212,175,55,0.4); }
+
+    /* Modal إشعار النجاح */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10, 25, 47, 0.7); backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal-card {
+      background: #FFF; padding: 28px 30px; border-radius: 18px; text-align: center;
+      max-width: 380px; width: 90%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+      border-top: 5px solid var(--gold); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .modal-icon {
+      width: 60px; height: 60px; background: #FEF3C7; color: #B45309;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 30px; margin: 0 auto 12px auto; border: 2px solid var(--gold);
+    }
+    .modal-card h3 { color: var(--primary); font-size: 18px; margin-bottom: 8px; font-weight: 800; }
+    .modal-card p { color: #64748B; font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
+    .modal-btn {
+      background: var(--primary); color: var(--gold); border: none; padding: 10px 26px;
+      border-radius: 8px; font-weight: 800; cursor: pointer;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* الحاوية الرئيسية لحقل البحث والقائمة */
+.custom-search-container {
+  position: relative;
+  width: 100%;
+}
+
+/* القائمة المنسدلة الاحترافية */
+.suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(10, 25, 47, 0.15);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none; /* مخفية افتراضياً */
+}
+
+/* شريط التمرير (Scrollbar) المخصص */
+.suggestions-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+.suggestions-dropdown::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 10px;
+}
+
+/* عنصر المريض داخل القائمة */
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #F1F5F9;
+  transition: all 0.2s ease;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background-color: #F0F9FF;
+}
+
+/* تفاصيل بيانات المريض داخل العنصر */
+.suggestion-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.suggestion-avatar {
+  width: 32px;
+  height: 32px;
+  background: #E0F2FE;
+  color: #0284C7;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.suggestion-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.suggestion-code {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0284C7;
+  background: #E0F2FE;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    
+    <!-- Header العيادة الأصلي -->
+    <div class="clinic-header">
+      <button type="button" onclick="goToMainDashboard()" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.15); border: 1px solid var(--gold); color: white; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight:700; cursor: pointer; z-index: 10;">
+        🏠 القائمة الرئيسية
+      </button>
+
+      <div class="clinic-logo-badge">💳</div>
+      <div class="clinic-title-en">RONAQ SMILE CLINIC</div>
+      <div class="clinic-title-ar">تسجيل مدفوعات المرضى</div>
+      <div class="clinic-slogan">"كـل ابـتـسـامـة... لـهـا رونق"</div>
+    </div>
+
+    <div class="form-body">
+
+      <!-- 🔍 خانة البحث الاحترافية -->
+<div class="form-group search-group-full">
+  <label>🔍 ابحث عن المريض (بالاسم أو الكود) *</label>
+  <div class="custom-search-container">
+    <input type="text" id="patientSearchInput" placeholder="اكتب اسم المريض أو الكود للاختيار..." oninput="fetchPatientDetailsLive()" autocomplete="off">
+    <!-- قائمة الاقتراحات المخصصة -->
+    <div id="customSuggestionsList" class="suggestions-dropdown"></div>
+  </div>
+  <div id="idNotFoundError" class="error-msg">⚠️ لم يتم العثور على المريض بالسجلات!</div>
+</div>
+
+      <!-- 2. تاريخ الدفعة -->
+      <div class="form-group">
+        <label>تاريخ الدفعة *</label>
+        <input type="date" id="paymentDate">
+        <div id="dateError" class="error-msg">⚠️ يرجى تحديد تاريخ الدفعة</div>
+      </div>
+
+      <!-- بطاقة تفاصيل بيانات المريض المالية -->
+      <div class="patient-info-card" id="patientInfoCard">
+        <div class="info-row">
+          <span class="info-label">كود المريض:</span>
+          <span class="info-val" id="dispPatientCode" style="color:var(--primary);">-</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">اسم المريض:</span>
+          <span class="info-val" id="dispPatientName">-</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">المبلغ الإجمالي المطلـوب:</span>
+          <span class="info-val" id="dispTotalRequired">0 EGP</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">إجمالي المدفوع سابـقاً:</span>
+          <span class="info-val" style="color:#166534;" id="dispTotalPaid">0 EGP</span>
+        </div>
+      </div>
+
+      <!-- 3. المبلغ المدفوع والمتبقي -->
+      <div class="row-2">
+        <div class="form-group">
+          <label>المبلغ الذي سيتم دفعه (EGP) *</label>
+          <input type="number" id="amountPaid" min="1" placeholder="0" oninput="calculateRemainingLive()">
+          <div id="amountError" class="error-msg">⚠️ يرجى كتابة مبلغ صحيح</div>
+          <div id="amountExceedError" class="error-msg">⚠️ المبلغ أعلى من المتبقي على المريض!</div>
+        </div>
+        <div class="form-group">
+          <label>المبلغ المتبقي بعد الدفعة (EGP)</label>
+          <input type="text" id="remainingBalance" value="0" readonly style="background:#F1F5F9; font-weight:bold; color:#B91C1C;">
+        </div>
+      </div>
+
+      <!-- 4. طريقة الدفع والملاحظات -->
+      <div class="form-group">
+        <label>طريقة الدفع *</label>
+        <select id="paymentMethod">
+          <option value="">اختر طريقة الدفع</option>
+          <option value="نقداً">نقداً (Cash)</option>
+          <option value="تحويل بنكي">تحويل بنكي (Bank Transfer)</option>
+          <option value="فودافون كاش">فودافون كاش (Vodafone Cash)</option>
+        </select>
+        <div id="methodError" class="error-msg">⚠️ يرجى تحديد طريقة الدفع</div>
+      </div>
+
+      <div class="form-group">
+        <label>ملاحظات الدفعة (اختياري)</label>
+        <input type="text" id="notes" placeholder="مثال: دفعة جلسة التركيبات / رقم التحويل...">
+      </div>
+
+      <button type="button" class="btn-submit" id="btnSubmit" onclick="submitPayment()">تسجيل الدفعة الآن</button>
+
+    </div>
+  </div>
+
+  <!-- Modal النجاح -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-card">
+      <div class="modal-icon">✨</div>
+      <h3>تم تسجيل الدفعة!</h3>
+      <p id="modalMsg">تم حفظ الدفعة بنجاح وتحديث حساب المريض.</p>
+      <button class="modal-btn" onclick="closeModal()">موافق</button>
+    </div>
+  </div>
+
+  <script>
+    var currentPatientData = null;
+    var searchDebounceTimer = null;
+
+    window.onload = function() {
+      var dateElem = document.getElementById('paymentDate');
+      if (dateElem) dateElem.valueAsDate = new Date();
+    };
+
+    // 1. الاستجابة اللحظية الفورية فور اختيار مريض من القائمة بالماوس/اللمس
+    function checkSelectionDirectly() {
+      var searchInput = document.getElementById('patientSearchInput');
+      if (!searchInput) return;
+
+      var searchVal = searchInput.value.trim();
+      if (searchVal.length >= 2) {
+        loadFinancialDetails(searchVal);
+      }
+    }
+
+    // 2. معالجة البحث والاقتراحات أثناء الكتابة
+
+// إخفاء قائمة الاقتراحات عند النقر في أي مكان خارجها
+document.addEventListener('click', function(e) {
+  var container = document.querySelector('.custom-search-container');
+  var dropdown = document.getElementById('customSuggestionsList');
+  if (container && !container.contains(e.target) && dropdown) {
+    dropdown.style.display = 'none';
+  }
+});
+
+function fetchPatientDetailsLive() {
+  clearTimeout(searchDebounceTimer);
+  
+  var searchInput = document.getElementById('patientSearchInput');
+  if (!searchInput) return;
+
+  var searchVal = searchInput.value.trim();
+  var notFoundErr = document.getElementById('idNotFoundError');
+  var card = document.getElementById('patientInfoCard');
+  var dropdown = document.getElementById('customSuggestionsList');
+
+  // إخفاء القائمة إذا كان المدخل أقل من حرفين
+  if (searchVal.length < 2) {
+    if (dropdown) { dropdown.innerHTML = ''; dropdown.style.display = 'none'; }
+    if (notFoundErr) notFoundErr.style.display = 'none';
+    if (card) card.style.display = 'none';
+    currentPatientData = null;
+    return;
+  }
+
+  searchDebounceTimer = setTimeout(function() {
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      
+      google.script.run
+        .withSuccessHandler(function(list) {
+          if (!dropdown) return;
+          dropdown.innerHTML = '';
+
+          if (list && list.length > 0) {
+            list.forEach(function(item) {
+              var itemDiv = document.createElement('div');
+              itemDiv.className = 'suggestion-item';
+              
+              // تصميم العنصر الداخلي
+              itemDiv.innerHTML = `
+                <div class="suggestion-info">
+                  <div class="suggestion-avatar">👤</div>
+                  <div class="suggestion-name">${item.name}</div>
+                </div>
+                <div class="suggestion-code">${item.id}</div>
+              `;
+
+              // ✅ التعديل هنا: تمرير الكود (item.id) مباشرة بدلاً من searchKey لضمان الجلب الدقيق
+              itemDiv.onclick = function() {
+                searchInput.value = item.name; // عرض اسم المريض في حقل البحث
+                dropdown.style.display = 'none';
+                
+                // تخزين الكود في متغير عام أو حقل مخفي لضمان استخدامه عند الحفظ
+                window.selectedPatientCode = item.id;
+                
+                // استدعاء دالة جلب البيانات المالية باستخدام الكود الصريح (item.id)
+                loadFinancialDetails(item.id);
+              };
+
+              dropdown.appendChild(itemDiv);
+            });
+            dropdown.style.display = 'block';
+          } else {
+            dropdown.style.display = 'none';
+          }
+        })
+        .withFailureHandler(function(err) {
+          console.error("خطأ في جلب الاقتراحات:", err);
+        })
+        .getPatientsListForDropdown(searchVal);
+    }
+  }, 100);
+}
+
+function loadFinancialDetails(selectedQuery) {
+  var notFoundErr = document.getElementById('idNotFoundError');
+  var card = document.getElementById('patientInfoCard');
+
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run
+      .withSuccessHandler(function(res) {
+        if (res && res.found) {
+          if (notFoundErr) notFoundErr.style.display = 'none';
+          currentPatientData = res;
+          
+          document.getElementById('dispPatientCode').innerText = res.patientId || '-';
+          document.getElementById('dispPatientName').innerText = res.patientName;
+          document.getElementById('dispTotalRequired').innerText = res.totalRequired + " EGP";
+          document.getElementById('dispTotalPaid').innerText = res.totalPaidSoFar + " EGP";
+          if (card) card.style.display = 'block';
+
+          calculateRemainingLive();
+        } else {
+          if (notFoundErr) notFoundErr.style.display = 'block';
+          if (card) card.style.display = 'none';
+          currentPatientData = null;
+        }
+      })
+      .getPatientFinancialDetails(selectedQuery);
+  }
+}
+
+    // 3. جلب تفاصيل الحساب المالي بدون تأخير
+    function loadFinancialDetails(selectedQuery) {
+      var notFoundErr = document.getElementById('idNotFoundError');
+      var card = document.getElementById('patientInfoCard');
+
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            if (res && res.found) {
+              if (notFoundErr) notFoundErr.style.display = 'none';
+              currentPatientData = res;
+              
+              document.getElementById('dispPatientCode').innerText = res.patientId || '-';
+              document.getElementById('dispPatientName').innerText = res.patientName;
+              document.getElementById('dispTotalRequired').innerText = res.totalRequired + " EGP";
+              document.getElementById('dispTotalPaid').innerText = res.totalPaidSoFar + " EGP";
+              if (card) card.style.display = 'block';
+
+              calculateRemainingLive();
+            } else {
+              if (notFoundErr) notFoundErr.style.display = 'block';
+              if (card) card.style.display = 'none';
+              currentPatientData = null;
+            }
+          })
+          .getPatientFinancialDetails(selectedQuery);
+      }
+    }
+
+    function calculateRemainingLive() {
+      if (!currentPatientData) return;
+      var paidNow = Number(document.getElementById('amountPaid').value) || 0;
+      var remain = currentPatientData.remainingBalance - paidNow;
+      
+      var exceedErr = document.getElementById('amountExceedError');
+      if (paidNow > currentPatientData.remainingBalance) {
+        if (exceedErr) exceedErr.style.display = 'block';
+      } else {
+        if (exceedErr) exceedErr.style.display = 'none';
+      }
+
+      document.getElementById('remainingBalance').value = Math.max(0, remain);
+    }
+
+    function submitPayment() {
+  document.querySelectorAll('.error-msg').forEach(function(el) { el.style.display = 'none'; });
+
+  var isValid = true;
+  var paymentDate = document.getElementById('paymentDate');
+  var searchInput = document.getElementById('patientSearchInput');
+  var amountPaid = document.getElementById('amountPaid');
+  var paymentMethod = document.getElementById('paymentMethod');
+
+  if (!paymentDate || !paymentDate.value) {
+    var dateErr = document.getElementById('dateError');
+    if (dateErr) dateErr.style.display = 'block';
+    isValid = false;
+  }
+
+  if (!searchInput || !searchInput.value.trim() || !currentPatientData) {
+    var notFoundErr = document.getElementById('idNotFoundError');
+    if (notFoundErr) notFoundErr.style.display = 'block';
+    isValid = false;
+  }
+
+  var paidVal = Number(amountPaid ? amountPaid.value : 0);
+  if (!amountPaid || !amountPaid.value || paidVal <= 0) {
+    var amountErr = document.getElementById('amountError');
+    if (amountErr) amountErr.style.display = 'block';
+    isValid = false;
+  }
+
+  if (currentPatientData && paidVal > currentPatientData.remainingBalance) {
+    var exceedErr = document.getElementById('amountExceedError');
+    if (exceedErr) exceedErr.style.display = 'block';
+    isValid = false;
+  }
+
+  if (!paymentMethod || !paymentMethod.value) {
+    var methodErr = document.getElementById('methodError');
+    if (methodErr) methodErr.style.display = 'block';
+    isValid = false;
+  }
+
+  if (!isValid) return;
+
+  var submitBtn = document.getElementById('btnSubmit');
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerText = "جاري الحفظ...";
+  }
+
+  var notesElem = document.getElementById('notes');
+
+  var paymentData = {
+    paymentDate: paymentDate.value,
+    patientId: currentPatientData.patientId,
+    patientName: currentPatientData.patientName,
+    amountPaid: paidVal,
+    newRemainingBalance: document.getElementById('remainingBalance').value,
+    paymentMethod: paymentMethod.value,
+    notes: notesElem ? notesElem.value.trim() : ''
+  };
+
+  google.script.run
+    .withSuccessHandler(function(res) {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "تسجيل الدفعة الآن";
+      }
+      
+      // تفريغ الحقول فوراً عند نجاح العملية
+      resetPaymentForm();
+      
+      // إظهار رسالة النجاح للمستخدم
+      showModal(res);
+    })
+    .withFailureHandler(function(err) {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "تسجيل الدفعة الآن";
+      }
+      alert("حدث خطأ أثناء حفظ الدفعة: " + (err.message || err));
+    })
+    .savePaymentData(paymentData);
+}
+
+    function showModal(msg) {
+      document.getElementById('modalMsg').innerText = msg;
+      document.getElementById('successModal').style.display = 'flex';
+    }
+
+    // إغلاق النافذة المنبثقة للنجاح
+function closeModal() {
+  var modal = document.getElementById('successModal');
+  if (modal) modal.style.display = 'none';
+}
+
+    // دالة إعادة ضبط وتفريغ جميع حقول النموذج بالكامل
+function resetPaymentForm() {
+  // 1. تفريغ حقل البحث وقائمة الاقتراحات المخصصة
+  var searchInput = document.getElementById('patientSearchInput');
+  if (searchInput) searchInput.value = '';
+
+  var dropdown = document.getElementById('customSuggestionsList');
+  if (dropdown) {
+    dropdown.innerHTML = '';
+    dropdown.style.display = 'none';
+  }
+
+  // 2. تفريغ باقي حقول الإدخال
+  var amountPaid = document.getElementById('amountPaid');
+  if (amountPaid) amountPaid.value = '';
+
+  var remaining = document.getElementById('remainingBalance');
+  if (remaining) remaining.value = '0';
+
+  var method = document.getElementById('paymentMethod');
+  if (method) method.value = '';
+
+  var notes = document.getElementById('notes');
+  if (notes) notes.value = '';
+
+  // 3. إعادة ضبط تاريخ الدفعة لتاريخ اليوم
+  var paymentDate = document.getElementById('paymentDate');
+  if (paymentDate) paymentDate.valueAsDate = new Date();
+
+  // 4. إخفاء بطاقة تفاصيل المريض المالية والرسائل التحذيرية
+  var card = document.getElementById('patientInfoCard');
+  if (card) card.style.display = 'none';
+
+  var notFoundErr = document.getElementById('idNotFoundError');
+  if (notFoundErr) notFoundErr.style.display = 'none';
+
+  document.querySelectorAll('.error-msg').forEach(function(el) {
+    el.style.display = 'none';
+  });
+
+  // 5. تصفير بيانات المريض المخزنة في الذاكرة المؤقتة
+  currentPatientData = null;
+}
+    
+    function goToMainDashboard() {
+      if (window.top !== window.self && window.location.hostname.includes('script.googleusercontent.com')) {
+        google.script.run.withSuccessHandler(function(url) {
+          window.top.location.href = url;
+        }).getScriptUrl();
+      } else {
+        google.script.run.showMainDashboard();
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <!-- وسم التوافق مع الشاشات والجوالات -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
+  
+  
+  <style>
+    /* إجبار الصفحة والمتصفح على عدم التمدد افقياً */
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  width: 100vw;
+  overflow-x: hidden;
+}
+
+body {
+  width: 100vw;
+  max-width: 100%;
+  margin: 0;
+  padding: 8px;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  background-color: #F1F5F9;
+}
+
+/* ضبط الكرت الرئيسي ليتكيف تماماً مع كافة أحجام الجوالات */
+.dashboard-container, .form-container {
+  width: 100% !important;
+  max-width: 480px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+  border-radius: 16px !important;
+}
+
+/* تكبير وتكييف الخانات والأزرار لتناسب اللمس بالأصبع */
+input, select, textarea, button {
+  font-size: 16px !important; /* يمنع التكبير التلقائي في آيفون عند الضغط على الحقول */
+  box-sizing: border-box !important;
+}
+    html, body {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important; /* يمنع التمرير الأفقي والشاشة العريضة */
+  margin: 0;
+  padding: 0;
+}
+
+/* جعل الكروت والحاويات تتناسب 100% مع عرض الجوال */
+.dashboard-container, .form-container {
+  width: 96% !important;
+  max-width: 500px !important;
+  margin: 8px auto !important;
+  box-sizing: border-box !important;
+}
+    :root {
+      --primary: #0A192F;
+      --accent: #1E3A8A;
+      --gold: #D4AF37;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --border-color: #E2E8F0;
+    }
+
+    * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; }
+    body { background: #F1F5F9; padding: 10px; color: var(--text-main); }
+    
+    .dashboard-container {
+      background: var(--card-bg); width: 100%; max-width: 550px; margin: 0 auto;
+      border-radius: 20px; box-shadow: 0 15px 35px rgba(10,25,47,0.12);
+      border: 1px solid var(--border-color); overflow: hidden;
+    }
+
+    .clinic-header {
+      background: linear-gradient(135deg, #0A192F 0%, #1E3A8A 100%);
+      color: white; padding: 25px 15px 20px; text-align: center;
+      position: relative; border-bottom: 4px solid var(--gold);
+    }
+
+    .clinic-logo-badge {
+      width: 65px; height: 65px; background: white; border-radius: 50%;
+      margin: 0 auto 10px auto; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.25); border: 2.5px solid var(--gold); font-size: 30px;
+    }
+
+    .clinic-title-en { font-size: 20px; font-weight: 900; letter-spacing: 1px; color: #FFF; }
+    .clinic-title-ar { font-size: 16px; font-weight: 800; color: var(--gold); margin-top: 3px; }
+    .clinic-slogan { font-size: 11px; font-weight: 500; color: #94A3B8; margin-top: 4px; }
+
+    .dashboard-body { padding: 20px 15px; text-align: center; }
+    .welcome-text { font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 20px; }
+
+    .menu-grid { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+    .menu-card {
+      background: #F8FAFC; border: 2px solid var(--border-color);
+      border-radius: 16px; padding: 16px; display: flex; align-items: center;
+      cursor: pointer; transition: all 0.25s ease; text-align: right;
+    }
+    .menu-card:active { transform: scale(0.98); background: #FFF; border-color: var(--gold); }
+
+    .card-icon {
+      width: 48px; height: 48px; border-radius: 12px; background: #0A192F;
+      color: var(--gold); display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-left: 12px; flex-shrink: 0; border: 1px solid var(--gold);
+    }
+
+    .card-info h3 { font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 3px; }
+    .card-info p { font-size: 11px; color: #64748B; font-weight: 500; line-height: 1.4; }
+    .arrow-icon { margin-right: auto; font-size: 16px; color: var(--gold); font-weight: bold; }
+
+    /* تجاوب الشاشات الصغيرة للموبايل */
+    @media (max-width: 480px) {
+      body { padding: 5px; }
+      .dashboard-container { border-radius: 14px; }
+      .clinic-header { padding: 20px 10px 15px; }
+      .clinic-title-en { font-size: 18px; }
+      .clinic-title-ar { font-size: 14px; }
+      .menu-card { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-container">
+    
+    <!-- Header العيادة -->
+    <div class="clinic-header">
+      <div class="clinic-logo-badge">✨</div>
+      <div class="clinic-title-en">RONAQ SMILE CLINIC</div>
+      <div class="clinic-title-ar">عيادة رونق سمايل لطب الأسنان</div>
+      <div class="clinic-slogan">"كـل ابـتـسـامـة... لـهـا رونق"</div>
+    </div>
+
+    <div class="dashboard-body">
+      <div class="welcome-text">مرحباً بك! اختر الإجراء المطلوب لإتمام العملية:</div>
+
+      <div class="menu-grid">
+        
+        <!-- خيار 1: تسجيل مريض جديد -->
+        <div class="menu-card" onclick="openForm('PatientForm')">
+          <div class="card-icon">👤</div>
+          <div class="card-info">
+            <h3>تسجيل مريض جديد</h3>
+            <p>إدخال بيانات مريض جديد، الحالات الطبية، والخدمات المطلوبة</p>
+          </div>
+          <div class="arrow-icon">❮</div>
+        </div>
+
+        <!-- خيار 2: تسجيل دفعة جديدة -->
+        <div class="menu-card" onclick="openForm('PaymentForm')">
+          <div class="card-icon">💳</div>
+          <div class="card-info">
+            <h3>تسجيل دفعة جديدة</h3>
+            <p>تسجيل دفعة جديدة لمريض، عرض المتبقي، وإكمال السداد</p>
+          </div>
+          <div class="arrow-icon">❮</div>
+        </div>
+
+        <!-- ⬇️ خيار 3 جديد: التقرير المالي للمريض ⬇️ -->
+        <div class="menu-card" onclick="openForm('PatientReport')">
+          <div class="card-icon">📊</div>
+          <div class="card-info">
+            <h3>كشف حساب مريض</h3>
+            <p>عرض سجل كافة دفعات المريض والمبالغ المتبقية والتكلفة الكلية</p>
+          </div>
+          <div class="arrow-icon">❮</div>
+        </div>
+
+        <!-- زر إدارة المواعيد -->
+ <div class="menu-card" onclick="openAppointmentsPage()">
+  <div class="card-icon">📅</div>
+  <div class="card-info">
+    <h3>إدارة المواعيد</h3>
+    <p>حجز موعد جديد ومعاينة جدول اليوم وإدارة الحالات</p>
+  </div>
+  <div class="arrow-icon">❮</div>
+</div>
+
+      </div>
+    </div>
+
+  </div>
+
+<script>
+  function openForm(formName) {
+    // التحقق المباشر إذا كنا نفتح من تطبيق الويب أم من داخل شيت جوجل
+    if (window.top !== window.self && window.location.hostname.includes('script.googleusercontent.com')) {
+      // فتح في تطبيق الويب (Web App)
+      google.script.run.withSuccessHandler(function(url) {
+        window.top.location.href = url + '?page=' + formName;
+      }).getScriptUrl();
+    } else {
+      // فتح داخل Google Sheets
+      if (formName === 'PatientForm') {
+        google.script.run.showPatientForm();
+      } else if (formName === 'PaymentForm') {
+        google.script.run.showPaymentForm();
+      }
+    }
+  }
+
+  function openAppointmentsPage() {
+  if (window.top !== window.self && window.location.hostname.includes('script.googleusercontent.com')) {
+    google.script.run.withSuccessHandler(function(url) {
+      window.top.location.href = url + "?page=appointments";
+    }).getScriptUrl();
+  } else {
+    google.script.run.showAppointmentsPage();
+  }
+}
+</script>
+  </script>
+
+</body>
+</html>

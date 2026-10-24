@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <title>كشف حساب مريض - عيادة رونق سمايل</title>
+  <style>
+    :root {
+      --primary: #0A192F;
+      --accent: #1E3A8A;
+      --gold: #D4AF37;
+      --gold-hover: #B89628;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --error-color: #EF4444;
+      --border-color: #E2E8F0;
+    }
+
+    html { -webkit-text-size-adjust: 100%; width: 100vw; overflow-x: hidden; }
+    body {
+      width: 100vw; max-width: 100%; margin: 0; padding: 10px;
+      box-sizing: border-box; overflow-x: hidden; background-color: #F1F5F9;
+      font-family: 'Tajawal', sans-serif; color: var(--text-main);
+    }
+
+    .form-container {
+      background: var(--card-bg); width: 100% !important; max-width: 580px !important;
+      margin: 0 auto !important; border-radius: 20px; box-shadow: 0 15px 35px rgba(10,25,47,0.1);
+      border: 1px solid var(--border-color); overflow: visible; position: relative; box-sizing: border-box !important;
+    }
+
+    .clinic-header {
+      background: linear-gradient(135deg, #0A192F 0%, #1E3A8A 100%);
+      color: white; padding: 25px 15px 18px; text-align: center;
+      position: relative; border-bottom: 4px solid var(--gold);
+      border-top-left-radius: 20px; border-top-right-radius: 20px;
+    }
+
+    .clinic-logo-badge {
+      width: 55px; height: 55px; background: white; border-radius: 50%;
+      margin: 0 auto 8px auto; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 2px solid var(--gold); font-size: 26px;
+    }
+
+    .clinic-title-en { font-size: 19px; font-weight: 900; letter-spacing: 1px; color: #FFF; }
+    .clinic-title-ar { font-size: 15px; font-weight: 800; color: var(--gold); margin-top: 2px; }
+    .clinic-slogan { font-size: 11px; font-weight: 500; color: #94A3B8; margin-top: 3px; }
+
+    .form-body { padding: 18px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-weight: 700; font-size: 12px; margin-bottom: 6px; color: var(--primary); }
+    
+    /* 🔍 تنسيقات قائمة الاقتراحات الاحترافية */
+    .custom-search-container {
+      position: relative;
+      width: 100%;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px !important;
+      font-weight: 700;
+      background-color: #F8FAFC;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      outline: none;
+      box-sizing: border-box !important;
+      transition: all 0.2s;
+    }
+    input:focus { border-color: var(--accent); background: #FFF; }
+    input.input-error { border-color: var(--error-color) !important; background-color: #FEF2F2 !important; }
+
+    .suggestions-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(10, 25, 47, 0.15);
+      max-height: 230px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+    }
+
+    .suggestions-dropdown::-webkit-scrollbar { width: 6px; }
+    .suggestions-dropdown::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid #F1F5F9;
+      transition: all 0.2s ease;
+    }
+    .suggestion-item:last-child { border-bottom: none; }
+    .suggestion-item:hover { background-color: #F0F9FF; }
+
+    .suggestion-info { display: flex; align-items: center; gap: 10px; }
+    .suggestion-avatar {
+      width: 32px; height: 32px; background: #E0F2FE; color: #0284C7;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; font-size: 14px; font-weight: bold;
+    }
+    .suggestion-name { font-size: 13.5px; font-weight: 700; color: var(--primary); }
+    .suggestion-code {
+      font-size: 11px; font-weight: 700; color: #0284C7;
+      background: #E0F2FE; padding: 3px 8px; border-radius: 6px;
+    }
+
+    .inline-alert {
+      color: var(--error-color);
+      font-size: 12px;
+      font-weight: 800;
+      margin-top: 6px;
+      display: none;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-submit {
+      width: 100%; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
+      color: #0A192F; border: none; padding: 12px; border-radius: 10px;
+      font-size: 15px !important; font-weight: 800; cursor: pointer; margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(212,175,55,0.3);
+    }
+
+    .summary-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 15px 0; text-align: center; }
+    .summary-card { background: #F8FAFC; border: 1.5px solid var(--border-color); border-radius: 12px; padding: 10px 5px; }
+    .summary-card .title { font-size: 11px; font-weight: 700; color: #64748B; display: block; }
+    .summary-card .value { font-size: 14px; font-weight: 900; margin-top: 4px; display: block; color: var(--primary); }
+    .summary-card .value.paid { color: #16A34A; }
+    .summary-card .value.remaining { color: #DC2626; }
+
+    .table-container {
+      width: 100%; overflow-x: auto; border: 1.5px solid var(--border-color);
+      border-radius: 12px; background: #FFF; margin-top: 10px;
+    }
+
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 13px; }
+    th { background: #0A192F; color: var(--gold); padding: 10px 8px; font-weight: 800; font-size: 12px; }
+    td { padding: 10px 8px; border-bottom: 1px solid var(--border-color); color: var(--text-main); font-weight: 600; }
+    tr:last-child td { border-bottom: none; }
+    .no-data { text-align: center; color: #94A3B8; padding: 20px; font-weight: 600; }
+
+    @media (max-width: 500px) {
+      body { padding: 4px; }
+      .clinic-header { padding-top: 45px; }
+      .form-body { padding: 12px; }
+      .summary-cards { gap: 5px; }
+      .summary-card .title { font-size: 10px; }
+      .summary-card .value { font-size: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  
+  <div class="clinic-header">
+    <button type="button" onclick="goToMainDashboard()" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.15); border: 1px solid var(--gold); color: white; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight:700; cursor: pointer; z-index: 10;">
+      🏠 القائمة الرئيسية
+    </button>
+
+    <div class="clinic-logo-badge">🦷</div>
+    <div class="clinic-title-en">RONAQ SMILE CLINIC</div>
+    <div class="clinic-title-ar">عيادة رونق سمايل للأسنان</div>
+    <div class="clinic-slogan">كشف حساب المريض</div>
+  </div>
+
+  <div class="form-body">
+    
+    <!-- 🔍 حقل الإدخال الذكي مع القائمة المخصصة -->
+    <div class="form-group">
+      <label>ابحث عن المريض (بالاسم أو الكود):</label>
+      <div class="custom-search-container">
+        <input type="text" id="patientIdInput" placeholder="اكتب اسم المريض أو الكود للاختيار..." oninput="fetchSuggestionsLive()" autocomplete="off">
+        <div id="customSuggestionsList" class="suggestions-dropdown"></div>
+      </div>
+      
+      <!-- رسالة التنبيه اللحظية أسفل الحقل -->
+      <div id="inputAlert" class="inline-alert"></div>
+
+      <button type="button" class="btn-submit" onclick="loadReport()">عرض كشف الحساب</button>
+    </div>
+
+    <!-- النتيجة -->
+    <div id="reportResult" style="display: none;">
+      
+      <div style="background: #F0F9FF; border-right: 4px solid var(--gold); padding: 10px 12px; border-radius: 8px; margin-top: 12px;">
+        <div id="patientName" style="font-weight: 900; font-size: 15px; color: var(--primary);">-</div>
+        <div id="patientPhone" style="font-size: 12px; color: #64748B; font-weight: 600; margin-top: 2px;">-</div>
+        <!-- 📝 ظهور الملاحظات هنا تحـت رقم الهاتف مباشرة -->
+        <div id="patientNotes" style="font-size: 12px; color: #1E3A8A; font-weight: 700; margin-top: 6px; border-top: 1px dashed #CBD5E1; padding-top: 6px;">📝 الملاحظات: -</div>
+      </div>
+
+      <div class="summary-cards">
+        <div class="summary-card">
+          <span class="title">التكلفة الإجمالية</span>
+          <span class="value" id="totalCost">0 ج.م</span>
+        </div>
+        <div class="summary-card">
+          <span class="title">إجمالي المدفوع</span>
+          <span class="value paid" id="totalPaid">0 ج.م</span>
+        </div>
+        <div class="summary-card">
+          <span class="title">إجمالي المتبقي</span>
+          <span class="value remaining" id="remainingCost">0 ج.م</span>
+        </div>
+      </div>
+
+      <label style="margin-top: 15px; font-size: 13px;">سجل الدفعات التفصيلي:</label>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>رقم الإيصال</th>
+              <th>المبلغ المدفوع</th>
+              <th>تاريخ الدفعة</th>
+            </tr>
+          </thead>
+          <tbody id="paymentsTableBody">
+            <!-- تعبئة السجلات -->
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<script>
+  var searchDebounceTimer = null;
+  var selectedPatientCode = "";
+
+  // إخفاء القائمة المنسدلة عند النقر خارجها
+  document.addEventListener('click', function(e) {
+    var container = document.querySelector('.custom-search-container');
+    var dropdown = document.getElementById('customSuggestionsList');
+    if (container && !container.contains(e.target) && dropdown) {
+      dropdown.style.display = 'none';
+    }
+  });
+
+  function showAlert(msg) {
+    var alertDiv = document.getElementById('inputAlert');
+    var inputEl = document.getElementById('patientIdInput');
+    alertDiv.innerText = '⚠️ ' + msg;
+    alertDiv.style.display = 'flex';
+    inputEl.classList.add('input-error');
+  }
+
+  function hideAlert() {
+    var alertDiv = document.getElementById('inputAlert');
+    var inputEl = document.getElementById('patientIdInput');
+    alertDiv.style.display = 'none';
+    inputEl.classList.remove('input-error');
+  }
+
+  // 1. جلب الاقتراحات فورياً أثناء الكتابة
+  function fetchSuggestionsLive() {
+    clearTimeout(searchDebounceTimer);
+    hideAlert();
+    selectedPatientCode = ""; // إعادة ضبط الاختيار
+
+    var searchInput = document.getElementById('patientIdInput');
+    var dropdown = document.getElementById('customSuggestionsList');
+    var searchVal = searchInput.value.trim();
+
+    if (searchVal.length < 2) {
+      if (dropdown) { dropdown.innerHTML = ''; dropdown.style.display = 'none'; }
+      document.getElementById('reportResult').style.display = 'none';
+      return;
+    }
+
+    searchDebounceTimer = setTimeout(function() {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(list) {
+            if (!dropdown) return;
+            dropdown.innerHTML = '';
+
+            if (list && list.length > 0) {
+              list.forEach(function(item) {
+                var itemDiv = document.createElement('div');
+                itemDiv.className = 'suggestion-item';
+                
+                itemDiv.innerHTML = `
+                  <div class="suggestion-info">
+                    <div class="suggestion-avatar">👤</div>
+                    <div class="suggestion-name">${item.name}</div>
+                  </div>
+                  <div class="suggestion-code">${item.id}</div>
+                `;
+
+                // اختيار المريض وحفظ الكود المباشر وجلب التقرير
+                itemDiv.onclick = function() {
+                  searchInput.value = item.searchKey;
+                  selectedPatientCode = item.id;
+                  dropdown.style.display = 'none';
+                  loadReport();
+                };
+
+                dropdown.appendChild(itemDiv);
+              });
+              dropdown.style.display = 'block';
+            } else {
+              dropdown.style.display = 'none';
+            }
+          })
+          .withFailureHandler(function(err) {
+            console.error("خطأ في جلب الاقتراحات:", err);
+          })
+          .getPatientsListForDropdown(searchVal);
+      }
+    }, 100);
+  }
+
+  // 2. تحميل كشف الحساب
+  function loadReport() {
+    var rawInput = document.getElementById('patientIdInput').value.trim();
+    
+    if (!rawInput) {
+      showAlert('يرجى كتابة اسم المريض أو كوده للاختيار');
+      document.getElementById('reportResult').style.display = 'none';
+      return;
+    }
+
+    hideAlert();
+    
+    // إذا كان المريض محدداً سابقاً أو نص مباشر
+    var searchKey = selectedPatientCode || rawInput;
+
+    google.script.run
+      .withSuccessHandler(renderReport)
+      .withFailureHandler(function(err) {
+        showAlert('حدث خطأ أثناء جلب البيانات: ' + err.message);
+      })
+      .getPatientPaymentHistory(searchKey);
+  }
+
+  // 3. عرض النتيجة بالجدول والبطاقات
+  function renderReport(data) {
+    if (!data.success) {
+      showAlert('هذا المريض غير مسجل في النظام!');
+      document.getElementById('reportResult').style.display = 'none';
+      return;
+    }
+
+    hideAlert();
+
+    document.getElementById('patientName').innerText = data.patient.name;
+    document.getElementById('patientPhone').innerText = 'رقم الهاتف: ' + (data.patient.phone || '-');
+    
+    // عرض الملاحظات التجميعية المسجلة في الدفعات تحـت رقم الهاتف مباشرة
+    document.getElementById('patientNotes').innerText = '📝 الملاحظات: ' + (data.notesSummary || 'لا توجد ملاحظات');
+
+    document.getElementById('totalCost').innerText = data.patient.totalCost + ' ج.م';
+    document.getElementById('totalPaid').innerText = data.totalPaid + ' ج.م';
+    document.getElementById('remainingCost').innerText = data.remaining + ' ج.م';
+
+    var tbody = document.getElementById('paymentsTableBody');
+    tbody.innerHTML = '';
+
+    if (data.payments.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="3" class="no-data">لا توجد دفعات مسجلة لهذا المريض</td></tr>';
+    } else {
+      data.payments.forEach(function(item) {
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td style="font-weight:700;">' + item.receiptNo + '</td>' +
+                       '<td style="color:#16A34A; font-weight:800;">' + item.amount + ' ج.م</td>' +
+                       '<td>' + item.date + '</td>';
+        tbody.appendChild(tr);
+      });
+    }
+
+    document.getElementById('reportResult').style.display = 'block';
+  }
+
+  function goToMainDashboard() {
+    if (window.top !== window.self && window.location.hostname.includes('script.googleusercontent.com')) {
+      google.script.run.withSuccessHandler(function(url) {
+        window.top.location.href = url;
+      }).getScriptUrl();
+    } else {
+      google.script.run.showMainDashboard();
+    }
+  }
+</script>
+
+</body>
+</html>

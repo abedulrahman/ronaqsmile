@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #0A192F;
+      --accent: #1E3A8A;
+      --gold: #D4AF37;
+      --gold-hover: #B89628;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --error-color: #EF4444;
+      --success-color: #10B981;
+      --border-color: #E2E8F0;
+    }
+
+    * { box-sizing: border-box; font-family: 'Tajawal', sans-serif; margin: 0; padding: 0; }
+    
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-color: #F1F5F9;
+      color: var(--text-main);
+      -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    
+    .form-container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(10,25,47,0.08);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    .clinic-header {
+      background: linear-gradient(135deg, #0A192F 0%, #1E3A8A 100%);
+      color: white;
+      padding: 20px 15px;
+      text-align: center;
+      position: relative;
+      border-bottom: 4px solid var(--gold);
+    }
+
+    /* زر الصفحة الرئيسية متوافق مع الموبايل تماماً */
+    .home-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid var(--gold);
+      color: white;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: background 0.2s;
+      z-index: 10;
+    }
+    .home-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .clinic-logo-badge {
+      width: 60px; height: 60px; background: white; border-radius: 50%;
+      margin: 10px auto 8px auto; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 2px solid var(--gold);
+      font-size: 28px;
+    }
+
+    .clinic-title-en { font-size: 18px; font-weight: 900; letter-spacing: 0.5px; color: #FFF; text-transform: uppercase; }
+    .clinic-title-ar { font-size: 16px; font-weight: 800; color: var(--gold); margin-top: 2px; }
+    .clinic-slogan { font-size: 11px; font-weight: 500; color: #94A3B8; margin-top: 3px; }
+
+    .form-body { padding: 18px; }
+    .form-group { margin-bottom: 12px; }
+    
+    /* نظام الأعمدة المرن للشاشات الكبيرة والصغيرة */
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 480px) {
+      .row-2 { grid-template-columns: 1fr; gap: 0; }
+    }
+    
+    label { display: block; font-weight: 700; font-size: 12px; margin-bottom: 4px; color: var(--primary); }
+    
+    input, select, textarea {
+      width: 100%; padding: 10px 12px; font-size: 16px !important; font-weight: 500;
+      background-color: #F8FAFC; border: 1.5px solid var(--border-color);
+      border-radius: 8px; outline: none; transition: all 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); background: #FFF; box-shadow: 0 0 0 3px rgba(30,58,138,0.1); }
+    
+    .error-msg { color: var(--error-color); font-size: 11px; font-weight: 700; margin-top: 3px; display: none; }
+    .input-error { border-color: var(--error-color) !important; background-color: #FEF2F2 !important; }
+
+    .checkbox-group {
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px;
+      background: #F8FAFC;
+    }
+    .checkbox-item { display: flex; align-items: center; justify-content: space-between; padding: 6px 4px; font-size: 12px; border-bottom: 1px solid #EDF2F7; }
+    .checkbox-item:last-child { border-bottom: none; }
+    .checkbox-item input { width: auto; margin-left: 6px; cursor: pointer; }
+
+    .pledge-box {
+      background: #F0F9FF; border-right: 4px solid var(--gold); padding: 10px;
+      border-radius: 8px; font-size: 11px; line-height: 1.5; color: #0C4A6E; margin-top: 10px;
+    }
+
+    .btn-submit {
+      width: 100%; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
+      color: #0A192F; border: none; padding: 12px; border-radius: 10px;
+      font-size: 15px; font-weight: 800; cursor: pointer; margin-top: 15px;
+      box-shadow: 0 4px 12px rgba(212,175,55,0.3); transition: all 0.2s;
+    }
+    .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(212,175,55,0.4); }
+    .conditional-field { display: none; margin-top: 6px; }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10, 25, 47, 0.7); backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center; z-index: 1000;
+      padding: 15px;
+    }
+    .modal-card {
+      background: #FFF; padding: 24px 20px; border-radius: 16px; text-align: center;
+      max-width: 360px; width: 100%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+      border-top: 5px solid var(--gold);
+    }
+    .modal-icon {
+      width: 55px; height: 55px; background: #FEF3C7; color: #B45309;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 28px; margin: 0 auto 12px auto; border: 2px solid var(--gold);
+    }
+    .modal-card h3 { color: var(--primary); font-size: 17px; margin-bottom: 6px; font-weight: 800; }
+    .modal-card p { color: #64748B; font-size: 12px; margin-bottom: 18px; line-height: 1.4; }
+    .modal-btn {
+      background: var(--primary); color: var(--gold); border: none; padding: 10px 24px;
+      border-radius: 8px; font-weight: 800; cursor: pointer;
+    }
+
+    .visitor-hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    
+    <div class="clinic-header">
+      <!-- زر الصفحة الرئيسية بتصميم متناسق ومستقل -->
+      <button type="button" class="home-btn" onclick="goToMainDashboard()">
+        🏠 القائمة الرئيسية
+      </button>
+
+      <div class="clinic-logo-badge">✨</div>
+      <div class="clinic-title-en">RONAQ SMILE CLINIC</div>
+      <div class="clinic-title-ar">عيادة رونق سمايل لطب الأسنان</div>
+      <div class="clinic-slogan">"كـل ابـتـسـامـة... لـهـا رونق"</div>
+    </div>
+
+    <div class="form-body">
+
+      <!-- 1. الاسم والجنس -->
+      <div class="row-2">
+        <div class="form-group">
+          <label>اسم المريض كامل *</label>
+          <input type="text" id="fullName" placeholder="الاسم الرباعي">
+          <div id="fullNameError" class="error-msg">⚠️ يرجى إدخال اسم المريض كاملاً</div>
+        </div>
+        <div class="form-group">
+          <label>الجنس *</label>
+          <select id="gender">
+            <option value="">اختر الجنس</option>
+            <option value="ذكر">ذكر</option>
+            <option value="أنثى">أنثى</option>
+          </select>
+          <div id="genderError" class="error-msg">⚠️ يرجى اختيار الجنس</div>
+        </div>
+      </div>
+
+      <!-- 2. الهاتف والسن -->
+      <div class="row-2">
+        <div class="form-group">
+          <label>رقم الموبايل *</label>
+          <input type="tel" id="phone" maxlength="11" placeholder="01XXXXXXXXX" oninput="validatePhoneLive()">
+          <div id="phoneError" class="error-msg">⚠️ الرقم يجب أن يكون 11 رقماً ويبدأ بـ 01</div>
+        </div>
+        <div class="form-group">
+          <label>العمر *</label>
+          <input type="number" id="age" min="1" placeholder="مثال: 28">
+          <div id="ageError" class="error-msg">⚠️ يرجى إدخال العمر</div>
+        </div>
+      </div>
+
+      <!-- كود المريض -->
+      <div class="form-group">
+        <label>كود المريض *</label>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <select id="idPrefix" onchange="handlePrefixChange()" style="width: 95px; flex-shrink: 0; font-weight: 800; color: var(--primary); text-align: center;">
+            <option value="R-">R-</option>
+            <option value="RS-" selected>RS-</option>
+            <option value="RZ-">RZ-</option>
+          </select>
+          <input type="text" id="patientId" maxlength="4" placeholder="1001" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 4); checkDuplicateIdLive();" style="flex: 1;">
+        </div>
+        <div id="idError" class="error-msg">⚠️ يجب إدخال 4 أرقام بالضبط!</div>
+        <div id="idExistError" class="error-msg">⚠️ كود المريض مسجل مسبقاً!</div>
+      </div>
+
+      <!-- 3. نوع العلاج -->
+      <div class="visitor-toggle-section">
+        <div class="form-group">
+          <label>نوع العلاج (يمكن اختيار أكثر من خيار) *</label>
+          <div class="checkbox-group" id="servicesList">
+            <span>جاري تحميل قائمة الخدمات...</span>
+          </div>
+          <div id="treatmentError" class="error-msg">⚠️ يرجى اختيار نوع علاج واحد على الأقل</div>
+        </div>
+
+        <!-- التكلفة والخصم -->
+        <div class="row-2">
+          <div class="form-group">
+            <label>إجمالي تكلفة العلاج (EGP)</label>
+            <input type="text" id="totalCost" value="0" readonly style="background:#E2E8F0; font-weight:bold;">
+          </div>
+          <div class="form-group">
+            <label>مبلغ الخصم (EGP)</label>
+            <input type="number" id="discountPercent" value="0" min="0" placeholder="أدخل المبلغ" oninput="calculateFinalCost()">
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div class="form-group">
+            <label>المبلغ بعد الخصم (EGP)</label>
+            <input type="text" id="finalCost" value="0" readonly style="background:#DCFCE7; font-weight:bold; color:#166534;">
+          </div>
+          <div class="form-group">
+            <label>الطبيب المتابع *</label>
+            <select id="doctor">
+              <option value="">اختر الطبيب</option>
+              <option value="د. فؤاد">د. فؤاد</option>
+              <option value="د. نورهان">د. نورهان</option>
+              <option value="د. حسين">د. حسين</option>
+            </select>
+            <div id="doctorError" class="error-msg">⚠️ يرجى اختيار الطبيب</div>
+          </div>
+        </div>
+
+        <!-- 5. الأسئلة الطبية -->
+        <div class="form-group">
+          <label>هل تعاني من أي مرض؟ *</label>
+          <select id="hasDisease" onchange="toggleDiseaseBox()">
+            <option value="لا">لا</option>
+            <option value="نعم">نعم</option>
+          </select>
+          
+          <div id="diseaseBox" class="conditional-field">
+            <label style="margin-top:6px;">اختر الأمراض:</label>
+            <div class="checkbox-group" style="max-height: 150px;">
+              <div class="checkbox-item"><label><input type="checkbox" class="disease-chk" value="مرض السكري"> مرض السكري</label></div>
+              <div class="checkbox-item"><label><input type="checkbox" class="disease-chk" value="ضغط الدم"> ضغط الدم</label></div>
+              <div class="checkbox-item"><label><input type="checkbox" class="disease-chk" value="أمراض القلب"> أمراض القلب</label></div>
+              <div class="checkbox-item"><label><input type="checkbox" class="disease-chk" value="سيولة في الدم"> سيولة في الدم</label></div>
+              <div class="checkbox-item"><label><input type="checkbox" class="disease-chk" value="أخرى" id="otherDiseaseChk" onchange="toggleOtherDiseaseInput()"> أخرى</label></div>
+            </div>
+            <input type="text" id="otherDiseaseInput" placeholder="اذكر الأمراض الأخرى..." class="conditional-field">
+            <div id="diseaseSelectError" class="error-msg">⚠️ يرجى اختيار مرض واحد على الأقل</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>هل تأخذ أدوية معينة؟ *</label>
+          <select id="hasMedicine" onchange="toggleField('hasMedicine', 'medicineInput', 'medicineError')">
+            <option value="لا">لا</option>
+            <option value="نعم">نعم</option>
+          </select>
+          <input type="text" id="medicineInput" placeholder="أسماء الأدوية..." class="conditional-field">
+          <div id="medicineError" class="error-msg">⚠️ يرجى كتابة أسماء الأدوية</div>
+        </div>
+
+        <div class="form-group">
+          <label>هل هناك حساسية لمواد أو أدوية معينة؟ *</label>
+          <select id="hasAllergy" onchange="toggleField('hasAllergy', 'allergyInput', 'allergyError')">
+            <option value="لا">لا</option>
+            <option value="نعم">نعم</option>
+          </select>
+          <input type="text" id="allergyInput" placeholder="أسماء المواد أو الأدوية..." class="conditional-field">
+          <div id="allergyError" class="error-msg">⚠️ يرجى كتابة أسباب الحساسية</div>
+        </div>
+
+        <div class="form-group">
+          <label>هل أنت مدخن؟ *</label>
+          <select id="isSmoker">
+            <option value="لا">لا</option>
+            <option value="نعم">نعم</option>
+          </select>
+        </div>
+
+        <!-- التعهد والإقرار -->
+        <div class="pledge-box">
+          <strong>تعهد وإلتزام:</strong> أتعهد بالالتزام بتوجيهات الطبيب والمركز المعالج وحضور الجلسات، وأي تقصير يتحمله المريض ومسؤولية المضاعفات الناتجة.
+        </div>
+
+        <div class="form-group" style="margin-top: 10px;">
+          <label style="cursor:pointer; font-size: 12px;"><input type="checkbox" id="pledgeAgree" style="width:auto; vertical-align:middle;"> هل تقر وتوافق على التعهد أعلاه؟ *</label>
+          <div id="pledgeError" class="error-msg">⚠️ يجب الموافقة على التعهد لإتمام التسجيل</div>
+        </div>
+      </div>
+
+      <button type="button" class="btn-submit" id="btnSubmit" onclick="submitForm()">تسجيل المريض</button>
+
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-card">
+      <div class="modal-icon">✨</div>
+      <h3>تم التسجيل بنجاح!</h3>
+      <p id="modalMsg">تم حفظ بيانات المريض وإضافتها إلى سجلات العيادة بنجاح.</p>
+      <button class="modal-btn" onclick="closeModal()">موافق</button>
+    </div>
+  </div>
+
+  <script>
+    let isDuplicateId = false;
+
+    window.onload = function() {
+      google.script.run.withSuccessHandler(renderServices).getServicesData();
+    };
+
+    function renderServices(data) {
+      const container = document.getElementById('servicesList');
+      container.innerHTML = '';
+      if (!data || data.length === 0) {
+        container.innerHTML = '<span style="color:red">⚠️ لم يتم العثور على خدمات في الشيت</span>';
+        return;
+      }
+
+      let html = '';
+      data.forEach((s) => {
+        const sName = s.name || s[0];
+        const sPrice = s.price || s[1] || 0;
+
+        html += `
+          <div class="checkbox-item">
+            <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; flex: 1; margin: 0;">
+              <input type="checkbox" class="srv-chk" value="${sPrice}" data-name="${sName}" onchange="toggleServicePriceInput(this)"> 
+              <span>${sName}</span>
+            </label>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <input type="number" class="srv-price-input" value="${sPrice}" min="0" disabled 
+                     oninput="calculateTotalCost()" 
+                     style="width: 75px; padding: 4px; border: 1px solid #cbd5e1; border-radius: 4px; background: #e2e8f0; text-align: center; font-weight: bold; font-size: 12px;">
+              <span style="font-size: 11px; color: #64748b;">جنية</span>
+            </div>
+          </div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function toggleServicePriceInput(checkbox) {
+      const item = checkbox.closest('.checkbox-item');
+      const priceInput = item.querySelector('.srv-price-input');
+      
+      if (checkbox.checked) {
+        priceInput.disabled = false;
+        priceInput.style.background = '#ffffff';
+        priceInput.focus();
+      } else {
+        priceInput.disabled = true;
+        priceInput.style.background = '#e2e8f0';
+      }
+      calculateTotalCost();
+    }
+
+    function calculateTotalCost() {
+      let total = 0;
+      document.querySelectorAll('.checkbox-item').forEach(item => {
+        const chk = item.querySelector('.srv-chk');
+        const priceInput = item.querySelector('.srv-price-input');
+        if (chk && chk.checked) {
+          total += parseFloat(priceInput.value) || 0;
+        }
+      });
+      document.getElementById('totalCost').value = total;
+      calculateFinalCost();
+    }
+
+    function calculateFinalCost() {
+      const total = Number(document.getElementById('totalCost').value) || 0;
+      let discountAmount = Number(document.getElementById('discountPercent').value) || 0;
+      if (discountAmount < 0) discountAmount = 0;
+      const finalPrice = Math.max(0, total - discountAmount);
+      document.getElementById('finalCost').value = Math.round(finalPrice);
+    }
+
+    function validatePhoneLive() {
+      const phoneInput = document.getElementById('phone');
+      const phoneErr = document.getElementById('phoneError');
+      const val = phoneInput.value.trim();
+
+      if (val.length === 0) {
+        phoneErr.style.display = 'none';
+        phoneInput.classList.remove('input-error');
+        return;
+      }
+
+      if (val.length !== 11 || !val.startsWith('01') || isNaN(val)) {
+        phoneErr.style.display = 'block';
+        phoneInput.classList.add('input-error');
+      } else {
+        phoneErr.style.display = 'none';
+        phoneInput.classList.remove('input-error');
+      }
+    }
+
+    function checkDuplicateIdLive() {
+      const prefix = document.getElementById('idPrefix').value;
+      const idInput = document.getElementById('patientId');
+      const idNum = idInput.value.trim();
+      const existErr = document.getElementById('idExistError');
+      const lengthErr = document.getElementById('idError');
+
+      if (idNum.length === 0) {
+        lengthErr.style.display = 'none';
+        existErr.style.display = 'none';
+        idInput.classList.remove('input-error');
+        return;
+      }
+
+      if (idNum.length !== 4 || isNaN(idNum)) {
+        lengthErr.style.display = 'block';
+        existErr.style.display = 'none';
+        idInput.classList.add('input-error');
+        isDuplicateId = false;
+      } else {
+        lengthErr.style.display = 'none';
+        const fullCode = prefix + idNum;
+        google.script.run.withSuccessHandler(function(exists) {
+          isDuplicateId = exists;
+          if (exists) {
+            existErr.style.display = 'block';
+            idInput.classList.add('input-error');
+          } else {
+            existErr.style.display = 'none';
+            idInput.classList.remove('input-error');
+          }
+        }).checkPatientIdExists(fullCode);
+      }
+    }
+
+    function toggleField(selectId, fieldId, errorId) {
+      const val = document.getElementById(selectId).value;
+      const field = document.getElementById(fieldId);
+      field.style.display = (val === 'نعم') ? 'block' : 'none';
+      if (val === 'لا') {
+        field.value = '';
+        if (errorId) document.getElementById(errorId).style.display = 'none';
+      }
+    }
+
+    function toggleDiseaseBox() {
+      const val = document.getElementById('hasDisease').value;
+      document.getElementById('diseaseBox').style.display = (val === 'نعم') ? 'block' : 'none';
+      if (val === 'لا') {
+        document.querySelectorAll('.disease-chk').forEach(c => c.checked = false);
+        document.getElementById('otherDiseaseInput').value = '';
+        document.getElementById('otherDiseaseInput').style.display = 'none';
+        document.getElementById('diseaseSelectError').style.display = 'none';
+      }
+    }
+
+    function toggleOtherDiseaseInput() {
+      const isOtherChecked = document.getElementById('otherDiseaseChk').checked;
+      const otherInput = document.getElementById('otherDiseaseInput');
+      otherInput.style.display = isOtherChecked ? 'block' : 'none';
+      if (!isOtherChecked) otherInput.value = '';
+    }
+
+    function submitForm() {
+      document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+
+      let isValid = true;
+      let firstErrorElement = null;
+
+      const fullName = document.getElementById('fullName');
+      const gender = document.getElementById('gender');
+      const phone = document.getElementById('phone');
+      const age = document.getElementById('age');
+      const prefix = document.getElementById('idPrefix').value;
+      const patientId = document.getElementById('patientId');
+      const isVisitor = (prefix === 'RZ-');
+
+      if (!fullName.value.trim()) {
+        document.getElementById('fullNameError').style.display = 'block';
+        fullName.classList.add('input-error');
+        if (!firstErrorElement) firstErrorElement = fullName;
+        isValid = false;
+      }
+
+      if (!gender.value) {
+        document.getElementById('genderError').style.display = 'block';
+        gender.classList.add('input-error');
+        if (!firstErrorElement) firstErrorElement = gender;
+        isValid = false;
+      }
+
+      if (phone.value.trim().length !== 11 || !phone.value.trim().startsWith('01') || isNaN(phone.value.trim())) {
+        document.getElementById('phoneError').style.display = 'block';
+        phone.classList.add('input-error');
+        if (!firstErrorElement) firstErrorElement = phone;
+        isValid = false;
+      }
+
+      if (!age.value.trim() || Number(age.value) <= 0) {
+        document.getElementById('ageError').style.display = 'block';
+        age.classList.add('input-error');
+        if (!firstErrorElement) firstErrorElement = age;
+        isValid = false;
+      }
+
+      if (patientId.value.trim().length !== 4 || isNaN(patientId.value.trim())) {
+        document.getElementById('idError').style.display = 'block';
+        patientId.classList.add('input-error');
+        if (!firstErrorElement) firstErrorElement = patientId;
+        isValid = false;
+      } else if (isDuplicateId) {
+        document.getElementById('idExistError').style.display = 'block';
+        patientId.classList.add('input-error');
+        if (!firstErrorElement) firstErrorElement = patientId;
+        isValid = false;
+      }
+
+      let selectedTreatments = [];
+      let selectedDiseases = ['لا يوجد'];
+      let medicineVal = 'لا يوجد';
+      let allergyVal = 'لا يوجد';
+      let doctorVal = 'مريض زائر';
+      let totalCostVal = 0;
+      let discountVal = '0%';
+      let finalCostVal = 0;
+
+      if (!isVisitor) {
+        document.querySelectorAll('.checkbox-item').forEach(item => {
+          const chk = item.querySelector('.srv-chk');
+          if (chk && chk.checked) {
+            const sName = chk.getAttribute('data-name');
+            const customPrice = item.querySelector('.srv-price-input').value;
+            selectedTreatments.push(sName + " (" + customPrice + " EGP)");
+          }
+        });
+
+        if (selectedTreatments.length === 0) {
+          document.getElementById('treatmentError').style.display = 'block';
+          if (!firstErrorElement) firstErrorElement = document.getElementById('servicesList');
+          isValid = false;
+        }
+
+        const doctor = document.getElementById('doctor');
+        if (!doctor.value) {
+          document.getElementById('doctorError').style.display = 'block';
+          doctor.classList.add('input-error');
+          if (!firstErrorElement) firstErrorElement = doctor;
+          isValid = false;
+        } else {
+          doctorVal = doctor.value;
+        }
+
+        if (document.getElementById('hasDisease').value === 'نعم') {
+          selectedDiseases = [];
+          document.querySelectorAll('.disease-chk:checked').forEach(chk => {
+            if (chk.value !== 'أخرى') selectedDiseases.push(chk.value);
+          });
+          const otherVal = document.getElementById('otherDiseaseInput').value.trim();
+          if (document.getElementById('otherDiseaseChk').checked && otherVal) {
+            selectedDiseases.push(otherVal);
+          }
+
+          if (selectedDiseases.length === 0) {
+            document.getElementById('diseaseSelectError').style.display = 'block';
+            if (!firstErrorElement) firstErrorElement = document.getElementById('diseaseBox');
+            isValid = false;
+          }
+        }
+
+        if (document.getElementById('hasMedicine').value === 'نعم') {
+          medicineVal = document.getElementById('medicineInput').value.trim();
+          if (!medicineVal) {
+            document.getElementById('medicineError').style.display = 'block';
+            document.getElementById('medicineInput').classList.add('input-error');
+            if (!firstErrorElement) firstErrorElement = document.getElementById('medicineInput');
+            isValid = false;
+          }
+        }
+
+        if (document.getElementById('hasAllergy').value === 'نعم') {
+          allergyVal = document.getElementById('allergyInput').value.trim();
+          if (!allergyVal) {
+            document.getElementById('allergyError').style.display = 'block';
+            document.getElementById('allergyInput').classList.add('input-error');
+            if (!firstErrorElement) firstErrorElement = document.getElementById('allergyInput');
+            isValid = false;
+          }
+        }
+
+        const pledgeAgree = document.getElementById('pledgeAgree');
+        if (!pledgeAgree.checked) {
+          document.getElementById('pledgeError').style.display = 'block';
+          if (!firstErrorElement) firstErrorElement = pledgeAgree;
+          isValid = false;
+        }
+
+        totalCostVal = document.getElementById('totalCost').value;
+        discountVal = (document.getElementById('discountPercent').value || 0) + " EGP";
+        finalCostVal = document.getElementById('finalCost').value;
+      } else {
+        selectedTreatments = ['مريض زائر (بدون علاج محدد)'];
+      }
+
+      if (!isValid) {
+        if (firstErrorElement) {
+          firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      const submitBtn = document.getElementById('btnSubmit');
+      submitBtn.disabled = true;
+      submitBtn.innerText = "جاري الحفظ...";
+
+      const fullCode = prefix + patientId.value.trim();
+
+      const formData = {
+        fullName: fullName.value.trim(),
+        gender: gender.value,
+        phone: phone.value.trim(),
+        age: age.value.trim(),
+        patientId: fullCode,
+        treatments: selectedTreatments,
+        totalCost: totalCostVal,
+        discountPercent: discountVal,
+        finalCost: finalCostVal,
+        doctor: doctorVal,
+        diseases: selectedDiseases,
+        medicines: medicineVal,
+        allergies: allergyVal,
+        isSmoker: isVisitor ? 'غير محدد' : document.getElementById('isSmoker').value
+      };
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = "تسجيل المريض";
+          showModal(res);
+          resetForm();
+        })
+        .withFailureHandler(function(err) {
+          submitBtn.disabled = false;
+          submitBtn.innerText = "تسجيل المريض";
+          alert("حدث خطأ أثناء الحفظ: " + err.message);
+        })
+        .savePatientData(formData);
+    }
+
+    function showModal(msg) {
+      document.getElementById('modalMsg').innerText = msg;
+      document.getElementById('successModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('successModal').style.display = 'none';
+    }
+
+    function resetForm() {
+      document.getElementById('fullName').value = '';
+      document.getElementById('gender').value = '';
+      document.getElementById('phone').value = '';
+      document.getElementById('age').value = '';
+      document.getElementById('patientId').value = '';
+      document.getElementById('idPrefix').value = 'RS-';
+      document.getElementById('doctor').value = '';
+      document.getElementById('discountPercent').value = '0';
+      document.getElementById('totalCost').value = '0';
+      document.getElementById('finalCost').value = '0';
+      document.getElementById('pledgeAgree').checked = false;
+
+      document.getElementById('hasDisease').value = 'لا';
+      toggleDiseaseBox();
+
+      document.getElementById('hasMedicine').value = 'لا';
+      toggleField('hasMedicine', 'medicineInput');
+
+      document.getElementById('hasAllergy').value = 'لا';
+      toggleField('hasAllergy', 'allergyInput');
+
+      document.getElementById('isSmoker').value = 'لا';
+
+      document.querySelectorAll('.srv-chk').forEach(chk => chk.checked = false);
+      document.querySelectorAll('.error-msg').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      document.querySelectorAll('.srv-chk').forEach(chk => chk.checked = false);
+      document.querySelectorAll('.srv-price-input').forEach(inp => {
+        inp.disabled = true;
+        inp.style.background = '#e2e8f0';
+      });
+    }
+    
+    function goToMainDashboard() {
+      if (window.top !== window.self && window.location.hostname.includes('script.googleusercontent.com')) {
+        google.script.run.withSuccessHandler(function(url) {
+          window.top.location.href = url;
+        }).getScriptUrl();
+      } else {
+        google.script.run.showMainDashboard();
+      }
+    }
+
+    function handlePrefixChange() {
+      var prefix = document.getElementById('idPrefix').value;
+      var idInput = document.getElementById('patientId');
+
+      document.getElementById('idError').style.display = 'none';
+      document.getElementById('idExistError').style.display = 'none';
+      idInput.classList.remove('input-error');
+
+      var dynamicSections = document.querySelectorAll('.visitor-toggle-section');
+
+      if (prefix === 'RZ-') {
+        dynamicSections.forEach(function(el) { el.classList.add('visitor-hidden'); });
+        var storageKey = 'ronaq_rz_sequence_number';
+        var currentSeq = parseInt(localStorage.getItem(storageKey) || '0', 10);
+        var nextSeq = currentSeq + 1;
+        localStorage.setItem(storageKey, nextSeq);
+
+        idInput.value = ("0000" + nextSeq).slice(-4);
+        idInput.placeholder = '1001';
+        
+        if (typeof checkDuplicateIdLive === 'function') {
+          checkDuplicateIdLive();
+        }
+      } else {
+        dynamicSections.forEach(function(el) { el.classList.remove('visitor-hidden'); });
+        idInput.value = '';
+        idInput.placeholder = '1001';
+        isDuplicateId = false;
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  <title>إدارة المواعيد - عيادة رونق سمايل</title>
+  <style>
+    :root {
+      --primary: #0A192F;
+      --accent: #1E3A8A;
+      --gold: #D4AF37;
+      --gold-hover: #B89628;
+      --card-bg: #FFFFFF;
+      --text-main: #1E293B;
+      --error-color: #EF4444;
+      --success-color: #16A34A;
+      --border-color: #E2E8F0;
+    }
+
+    html { -webkit-text-size-adjust: 100%; width: 100vw; overflow-x: hidden; }
+    body {
+      width: 100vw; max-width: 100%; margin: 0; padding: 10px;
+      box-sizing: border-box; overflow-x: hidden; background-color: #F1F5F9;
+      font-family: 'Tajawal', sans-serif; color: var(--text-main);
+    }
+
+    .form-container {
+      background: var(--card-bg); width: 100% !important; max-width: 650px !important;
+      margin: 0 auto !important; border-radius: 20px; box-shadow: 0 15px 35px rgba(10,25,47,0.1);
+      border: 1px solid var(--border-color); overflow: visible; position: relative; box-sizing: border-box !important;
+    }
+
+    .clinic-header {
+      background: linear-gradient(135deg, #0A192F 0%, #1E3A8A 100%);
+      color: white; padding: 25px 15px 18px; text-align: center;
+      position: relative; border-bottom: 4px solid var(--gold);
+      border-top-left-radius: 20px; border-top-right-radius: 20px;
+    }
+
+    .clinic-logo-badge {
+      width: 55px; height: 55px; background: white; border-radius: 50%;
+      margin: 0 auto 8px auto; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: 2px solid var(--gold); font-size: 26px;
+    }
+
+    .clinic-title-en { font-size: 19px; font-weight: 900; letter-spacing: 1px; color: #FFF; }
+    .clinic-title-ar { font-size: 15px; font-weight: 800; color: var(--gold); margin-top: 2px; }
+    .clinic-slogan { font-size: 11px; font-weight: 500; color: #94A3B8; margin-top: 3px; }
+
+    .form-body { padding: 18px; }
+    .section-title {
+      font-size: 14px; font-weight: 800; color: var(--primary);
+      margin: 15px 0 10px 0; border-right: 4px solid var(--gold); padding-right: 8px;
+    }
+
+    .form-group { margin-bottom: 12px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    label { display: block; font-weight: 700; font-size: 12px; margin-bottom: 4px; color: var(--primary); }
+    
+    input[type="text"], input[type="date"], input[type="time"], select, textarea {
+      width: 100%; padding: 10px 12px; font-size: 14px !important; font-weight: 600;
+      background-color: #F8FAFC; border: 1.5px solid var(--border-color);
+      border-radius: 10px; outline: none; box-sizing: border-box !important;
+      font-family: 'Tajawal', sans-serif; transition: all 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); background: #FFF; }
+
+    /* البحث الذكي */
+    .custom-search-container { position: relative; width: 100%; }
+    .suggestions-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+      background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(10, 25, 47, 0.15); max-height: 200px; overflow-y: auto;
+      z-index: 1000; display: none;
+    }
+    .suggestion-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; cursor: pointer; border-bottom: 1px solid #F1F5F9;
+    }
+    .suggestion-item:hover { background-color: #F0F9FF; }
+
+    .btn-submit {
+      width: 100%; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hover) 100%);
+      color: #0A192F; border: none; padding: 12px; border-radius: 10px;
+      font-size: 15px !important; font-weight: 800; cursor: pointer; margin-top: 10px;
+      box-shadow: 0 4px 12px rgba(212,175,55,0.3);
+    }
+
+    .inline-alert {
+      padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 800;
+      margin-top: 10px; display: none; align-items: center; gap: 6px;
+    }
+    .alert-success { background: #DCFCE7; color: #15803D; border: 1px solid #86EFAC; }
+    .alert-error { background: #FEF2F2; color: #B91C1C; border: 1px solid #FCA5A5; }
+
+    /* جدول المواعيد */
+    .table-container {
+      width: 100%; overflow-x: auto; border: 1.5px solid var(--border-color);
+      border-radius: 12px; background: #FFF; margin-top: 10px;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: center; font-size: 12.5px; }
+    th { background: #0A192F; color: var(--gold); padding: 10px 6px; font-weight: 800; font-size: 11.5px; }
+    td { padding: 8px 6px; border-bottom: 1px solid var(--border-color); font-weight: 600; }
+    
+    .status-badge {
+      padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 800; display: inline-block;
+    }
+    .status-قادم { background: #FEF3C7; color: #D97706; }
+    .status-تم-الحضور { background: #DCFCE7; color: #15803D; }
+    .status-ملغي { background: #FEE2E2; color: #DC2626; }
+
+    .btn-action {
+      border: none; padding: 4px 8px; border-radius: 6px; font-size: 11px;
+      font-weight: 700; cursor: pointer; margin: 1px;
+    }
+    .btn-done { background: #22C55E; color: white; }
+    .btn-cancel { background: #EF4444; color: white; }
+
+    @media (max-width: 500px) {
+      body { padding: 4px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    
+    .custom-search-container {
+  position: relative;
+  width: 100%;
+}
+
+.suggestions-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(10, 25, 47, 0.15);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+}
+
+.suggestion-item:hover {
+  background-color: #F0F9FF;
+}
+
+.suggestions-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+}
+
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.2s;
+}
+
+.suggestion-item:hover {
+  background-color: #f8fafc;
+}
+
+.suggestion-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.suggestion-avatar {
+  font-size: 16px;
+}
+
+.suggestion-name {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 14px;
+}
+
+.suggestion-code {
+  color: #0284c7;
+  background-color: #e0f2fe;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ستايل زر حجز الموعد الرئيسي */
+.btn-submit-appointment {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border: none;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+  transition: all 0.25s ease-in-out;
+  width: 100%;
+  max-width: 280px;
+}
+
+.btn-submit-appointment:hover {
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  box-shadow: 0 6px 18px rgba(2, 132, 199, 0.35);
+  transform: translateY(-2px);
+}
+
+.btn-submit-appointment:active {
+  transform: translateY(0);
+}
+
+.btn-submit-appointment:disabled {
+  background: #94a3b8 !important;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.btn-submit-appointment .btn-icon {
+  font-size: 18px;
+}
+
+/* إشعار تفاعلي حديث (Toast) */
+.toast-notification {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #0A192F;
+  color: #fff;
+  padding: 14px 22px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  border-right: 5px solid var(--gold);
+}
+
+.toast-notification.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-notification.success { border-right-color: #22C55E; }
+.toast-notification.error { border-right-color: #EF4444; }
+
+/* تنسيق عام للقائمة المنسدلة للحالة */
+.status-select {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  border: 1.5px solid #CBD5E1;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  font-family: 'Tajawal', sans-serif;
+}
+
+/* ألوان مميزة لكل حالة عند اختيارها */
+.status-select[value="قيد الانتظار"],
+.status-select.pending {
+  background-color: #FEF3C7 !important;
+  color: #D97706 !important;
+  border-color: #FCD34D !important;
+}
+
+.status-select[value="مؤكد"],
+.status-select.confirmed {
+  background-color: #DCFCE7 !important;
+  color: #15803D !important;
+  border-color: #86EFAC !important;
+}
+
+.status-select[value="لم يحضر"],
+.status-select.absent {
+  background-color: #FEE2E2 !important;
+  color: #DC2626 !important;
+  border-color: #FCA5A5 !important;
+}
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  
+  <div class="clinic-header">
+    <button type="button" onclick="goToMainDashboard()" style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.15); border: 1px solid var(--gold); color: white; border-radius: 8px; padding: 5px 10px; font-size: 11px; font-weight:700; cursor: pointer; z-index: 10;">
+      🏠 القائمة الرئيسية
+    </button>
+
+    <div class="clinic-logo-badge">📅</div>
+    <div class="clinic-title-en">RONAQ SMILE CLINIC</div>
+    <div class="clinic-title-ar">عيادة رونق سمايل للأسنان</div>
+    <div class="clinic-slogan">جدول وحجوزات المواعيد</div>
+  </div>
+
+  
+
+  <div class="form-body">
+    
+    <!-- نموذج حجز موعد -->
+    <div class="section-title">حجز موعد جديد</div>
+    
+    <form id="appointmentForm" onsubmit="return false;">
+      
+       <!-- 🔍 حقل الإدخال الذكي مع القائمة المخصصة -->
+    <div class="form-group">
+  <label>اسم المريض (ابحث برقم الكود أو الاسم):</label>
+  <div class="custom-search-container" style="position: relative;">
+    <input type="text" id="patientSearchInput" placeholder="اكتب اسم المريض أو الكود..." oninput="fetchPatientSuggestions()" autocomplete="off" required>
+    <div id="customSuggestionsList" class="suggestions-dropdown"></div>
+  </div>
+</div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>رقم الهاتف:</label>
+          <input type="text" id="patientPhone" placeholder="01XXXXXXXXX">
+        </div>
+        <div class="form-group">
+          <label>نوع الإجراء / الجلسة:</label>
+          <select id="procedureType">
+            <option value="كشف وفحص">كشف وفحص</option>
+            <option value="تنظيف وتلميع">تنظيف وتلميع</option>
+            <option value="حشو أسنان">حشو أسنان</option>
+            <option value="علاج عصب">علاج عصب</option>
+            <option value="خلع أسنان">خلع أسنان</option>
+            <option value="جلسة تقويم">جلسة تقويم</option>
+            <option value="زراعة أسنان">زراعة أسنان</option>
+            <option value="تركيبات / جسور">تركيبات / جسور</option>
+            <option value="تبييض أسنان">تبييض أسنان</option>
+            <option value="أخرى">أخرى</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>تاريخ الموعد:</label>
+          <input type="date" id="appointmentDate" required>
+        </div>
+        <div class="form-group">
+          <label>وقت الموعد:</label>
+          <input type="time" id="appointmentTime" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>ملاحظات إضافية:</label>
+        <input type="text" id="appointmentNotes" placeholder="أدخل أي ملاحظات خاصة بالجلسة...">
+      </div>
+
+      <div class="form-actions-container" style="margin-top: 20px; text-align: center;">
+  <button type="button" id="bookAppointmentBtn" class="btn-submit-appointment" onclick="submitAppointmentForm(event)">
+    <span class="btn-icon">📅</span>
+    <span class="btn-text">حجز موعد</span>
+  </button>
+</div>
+      
+      <div id="formAlert" class="inline-alert"></div>
+    </form>
+
+    <hr style="margin: 20px 0; border: none; border-top: 1px dashed var(--border-color);">
+
+    <!-- استعراض المواعيد اليومية -->
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div class="section-title" style="margin: 0;">جدول المواعيد</div>
+      <input type="date" id="filterDate" onchange="loadAppointments()" style="width: 150px; padding: 6px 8px; font-size: 12px;">
+    </div>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>الوقت</th>
+            <th>اسم المريض</th>
+            <th>الإجراء</th>
+            <th>الحالة</th>
+          </tr>
+        </thead>
+        <tbody id="appointmentsTableBody">
+          <tr><td colspan="5" style="color:#94A3B8;">جاري تحميل المواعيد...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<div id="modernToast" class="toast-notification"></div>
+
+</body>
+
+<script>
+  var searchDebounceTimer = null;
+  window.selectedPatient = { id: "", name: "", phone: "" };
+
+  // إخفاء القائمة المنسدلة عند النقر خارج حقل البحث
+  document.addEventListener('click', function(e) {
+    var container = document.querySelector('.custom-search-container');
+    var dropdown = document.getElementById('customSuggestionsList');
+    if (container && !container.contains(e.target) && dropdown) {
+      dropdown.style.display = 'none';
+    }
+  });
+
+  // دالة جلب الاقتراحات المباشرة أثناء الكتابة
+  function fetchPatientSuggestions() {
+    clearTimeout(searchDebounceTimer);
+
+    var searchInput = document.getElementById('patientSearchInput');
+    var dropdown = document.getElementById('customSuggestionsList');
+    var phoneInput = document.getElementById('patientPhone');
+    if (!searchInput || !dropdown) return;
+
+    var searchVal = searchInput.value.trim();
+
+    // في حال مسح النص أو كتابة اسم جديد غير مسجل: نفتح إمكانية التعديل على حقل الهاتف
+    window.selectedPatient = { id: "", name: searchVal, phone: "" };
+    if (phoneInput) {
+      phoneInput.readOnly = false;
+      phoneInput.style.backgroundColor = "#ffffff";
+      phoneInput.style.cursor = "text";
+    }
+
+    if (searchVal.length < 1) {
+      dropdown.innerHTML = '';
+      dropdown.style.display = 'none';
+      return;
+    }
+
+    searchDebounceTimer = setTimeout(function() {
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(list) {
+            dropdown.innerHTML = '';
+
+            if (list && list.length > 0) {
+              list.forEach(function(item) {
+                var itemDiv = document.createElement('div');
+                itemDiv.className = 'suggestion-item';
+
+                // تصميم القائمة المطابق لكشف الحساب
+                itemDiv.innerHTML = `
+                  <div class="suggestion-info">
+                    <div class="suggestion-avatar">👤</div>
+                    <div class="suggestion-name">${item.name}</div>
+                  </div>
+                  <div class="suggestion-code">${item.id}</div>
+                `;
+
+                // عند اختيار المريض من القائمة المنسدلة
+                itemDiv.onclick = function() {
+                  // 1. كتابة الاسم والكود في حقل البحث
+                  var displayText = item.searchKey ? item.searchKey : (item.name + " (" + item.id + ")");
+                  searchInput.value = displayText;
+
+                  // 2. وضع رقم الهاتف وقفل الحقل لمنع التعديل عليه
+                  if (phoneInput) {
+                    phoneInput.value = item.phone || "";
+                    phoneInput.readOnly = true; // منع التعديل
+                    phoneInput.style.backgroundColor = "#f1f5f9"; // تغيير لون خلفية الحقل ليشير إلى أنه مقفل
+                    phoneInput.style.cursor = "not-allowed";
+                  }
+
+                  // 3. حفظ بيانات المريض
+                  window.selectedPatient = {
+                    id: item.id,
+                    name: item.name,
+                    phone: item.phone || ""
+                  };
+
+                  dropdown.style.display = 'none';
+                };
+
+                dropdown.appendChild(itemDiv);
+              });
+              dropdown.style.display = 'block';
+            } else {
+              dropdown.style.display = 'none';
+            }
+          })
+          .withFailureHandler(function(err) {
+            console.error("خطأ في جلب الاقتراحات:", err);
+          })
+          .getPatientsListForDropdown(searchVal);
+      }
+    }, 100);
+  }
+
+  function goToMainDashboard() {
+      if (window.top !== window.self && window.location.hostname.includes('script.googleusercontent.com')) {
+        google.script.run.withSuccessHandler(function(url) {
+          window.top.location.href = url;
+        }).getScriptUrl();
+      } else {
+        google.script.run.showMainDashboard();
+      }
+    }
+
+    function showToast(message, type = 'success') {
+  var toast = document.getElementById('modernToast');
+  if (!toast) return;
+  
+  toast.textContent = message;
+  toast.className = 'toast-notification ' + type + ' show';
+
+  setTimeout(function() {
+    toast.className = 'toast-notification';
+  }, 4000);
+}
+
+function submitAppointmentForm(event) {
+  if (event) event.preventDefault();
+
+  var btn = document.getElementById('bookAppointmentBtn');
+  var originalBtnHtml = btn ? btn.innerHTML : '';
+
+  // 1. جلب البيانات المحددة من نظام البحث الذكي
+  var globalPatient = window.selectedPatient || {};
+  var pCodeVal = globalPatient.id || '';
+  var pNameVal = globalPatient.name || document.getElementById('patientSearchInput')?.value || '';
+
+  // التحقق من اختيار المريض
+  if (!pCodeVal && !pNameVal.trim()) {
+    showToast('⚠️ يرجى اختيار المريض من القائمة أولاً!', 'error');
+    return;
+  }
+
+  // 2. جلب نوع الخدمة والإجراء
+  var procedureElem = document.getElementById('procedureType');
+  var serviceTypeVal = procedureElem ? procedureElem.value : '';
+
+  // 3. جلب الملاحظات والتاريخ والوقت والهاتف
+  var notesVal = document.getElementById('appointmentNotes')?.value || '';
+  var phoneVal = document.getElementById('patientPhone')?.value || '';
+  var dateVal = document.getElementById('appointmentDate')?.value || '';
+  var timeVal = document.getElementById('appointmentTime')?.value || '';
+
+  if (!dateVal || !timeVal) {
+    showToast('⚠️ يرجى تحديد تاريخ ووقت الموعد!', 'error');
+    return;
+  }
+
+  // 4. تجميع البيانات للإرسال
+  var formData = {
+    patientCode: String(pCodeVal).trim(),
+    patientName: String(pNameVal).trim(),
+    serviceType: String(serviceTypeVal).trim(),
+    notes: String(notesVal).trim(),
+    patientPhone: String(phoneVal).trim(),
+    appointmentDate: String(dateVal),
+    appointmentTime: String(timeVal)
+  };
+
+  // تعطيل الزر وعرض حالة التحميل بشكل أنيق
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span style="display:inline-block; animation: spin 1s linear infinite;">⏳</span> جاري الحجز...';
+  }
+
+  // 5. الإرسال إلى Google Apps Script
+  google.script.run
+    .withSuccessHandler(function(response) {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
+      }
+
+      if (response && response.success) {
+        // ✅ سيظهر هنا الإشعار الاحترافي متضمناً اسم المريض حصراً بناءً على رد السيرفر
+        showToast('✓ ' + response.message, 'success');
+        
+        // تفريغ النموذج وإعادة ضبط كائن المريض
+        var form = document.getElementById('appointmentForm');
+        if (form) form.reset();
+        window.selectedPatient = { id: "", name: "", phone: "" };
+        
+        // إعادة تحميل جدول المواعيد إن كانت الدالة موجودة
+        if (typeof loadAppointments === 'function') {
+          loadAppointments();
+        }
+      } else {
+        showToast('❌ ' + (response ? response.message : 'فشل حفظ الموعد'), 'error');
+      }
+    })
+    .withFailureHandler(function(error) {
+      if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalBtnHtml;
+      }
+      showToast('❌ حدث خطأ في الاتصال: ' + error.message, 'error');
+    })
+    .saveAppointment(formData);
+}
+
+// تحميل المواعيد تلقائياً عند فتح الصفحة وتحديد تاريخ اليوم في الفلتر
+window.addEventListener('DOMContentLoaded', function() {
+  var filterDateInput = document.getElementById('filterDate');
+  if (filterDateInput && !filterDateInput.value) {
+    var today = new Date().toISOString().split('T')[0];
+    filterDateInput.value = today;
+  }
+  loadAppointments();
+});
+
+function loadAppointments() {
+  var filterDateInput = document.getElementById('filterDate');
+  var selectedDate = filterDateInput ? filterDateInput.value : '';
+  
+  var tableBody = document.getElementById('appointmentsTableBody');
+  if (tableBody) {
+    tableBody.innerHTML = '<tr><td colspan="4" style="color:#64748B; padding: 15px;">جاري تحميل المواعيد...</td></tr>';
+  }
+
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run
+      .withSuccessHandler(function(res) {
+        if (!tableBody) return;
+        
+        if (res && res.success) {
+          var list = res.appointments;
+          if (list && list.length > 0) {
+            var html = '';
+            list.forEach(function(app) {
+              // قائمة الخيارات المطلوبة للحالة (قيد الانتظار، مؤكد، لم يحضر)
+              // تحديد الكلاس اللوني بناءً على الحالة الحالية
+              var statusClass = 'pending';
+              if (app.status === 'مؤكد') statusClass = 'confirmed';
+              else if (app.status === 'لم يحضر') statusClass = 'absent';
+
+              var statusDropdown = `
+                <select class="status-select ${statusClass}" onchange="handleStatusChange(this, ${app.rowId}, this.value)">
+                  <option value="قيد الانتظار" ${app.status === 'قيد الانتظار' ? 'selected' : ''}>⏳ قيد الانتظار</option>
+                  <option value="مؤكد" ${app.status === 'مؤكد' ? 'selected' : ''}>✓ مؤكد (حضر)</option>
+                  <option value="لم يحضر" ${app.status === 'لم يحضر' ? 'selected' : ''}>✕ لم يحضر</option>
+                </select>
+              `;
+
+              // ترتيب الأعمدة: 1. الوقت، 2. اسم المريض، 3. الإجراء، 4. الحالة
+              html += `<tr>
+                <td style="font-weight: 700; color: #0284c7; font-size: 13px;">${app.time || '-'}</td>
+                <td style="font-weight: 700; text-align: right; padding-right: 15px;">${app.patientName || '-'}</td>
+                <td>${app.serviceType || '-'}</td>
+                <td>${statusDropdown}</td>
+              </tr>`;
+            });
+            tableBody.innerHTML = html;
+          } else {
+            tableBody.innerHTML = '<tr><td colspan="4" style="color:#94A3B8; padding: 15px;">لا توجد مواعيد مسجلة لهذا التاريخ.</td></tr>';
+          }
+        } else {
+          tableBody.innerHTML = '<tr><td colspan="4" style="color:#EF4444; padding: 15px;">تعذر تحميل المواعيد.</td></tr>';
+        }
+      })
+      .withFailureHandler(function(err) {
+        if (tableBody) {
+          tableBody.innerHTML = '<tr><td colspan="4" style="color:#EF4444; padding: 15px;">خطأ في الاتصال بالسيرفر: ' + err.message + '</td></tr>';
+        }
+      })
+      .getAppointmentsByDate(selectedDate);
+  }
+}
+
+// دالة تحديث الحالة عند اختيارها من القائمة المنسدلة وحفظها في الشيت فوراً
+function changeAppointmentStatus(rowId, newStatus) {
+  if (typeof google !== 'undefined' && google.script && google.script.run) {
+    google.script.run
+      .withSuccessHandler(function(res) {
+        if (!res || !res.success) {
+          alert("خطأ في تحديث الحالة في السجل.");
+        }
+      })
+      .withFailureHandler(function(err) {
+        alert("خطأ اتصال: " + err.message);
+      })
+      .updateAppointmentStatus(rowId, newStatus);
+  }
+}
+function handleStatusChange(selectElement, rowId, newStatus) {
+  // تحديث الكلاس اللوني فوراً بسلاسة
+  selectElement.className = 'status-select';
+  if (newStatus === 'مؤكد') {
+    selectElement.classList.add('confirmed');
+  } else if (newStatus === 'لم يحضر') {
+    selectElement.classList.add('absent');
+  } else {
+    selectElement.classList.add('pending');
+  }
+
+  // إرسال التحديث للشيت
+  changeAppointmentStatus(rowId, newStatus);
+}
+</script>
